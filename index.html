@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Epitree · 甜丧灵魂图鉴</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&family=UnifrakturMaguntia&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0d0a0f;
+  --pink: #f2a0c4;
+  --pink-deep: #c4547a;
+  --pink-pale: #fde8f2;
+  --cream: #faf0e6;
+  --purple: #2d1a3d;
+  --text: #f0e6f0;
+  --text-dim: #9a8a9a;
+  --border: rgba(242,160,196,0.2);
+  --card: rgba(45,26,61,0.6);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Noto Serif SC', serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+.deco-float {
+  position: fixed; pointer-events:none; z-index:0;
+  opacity: 0.06; font-size: 80px;
+  animation: floatDrift 12s ease-in-out infinite;
+}
+.deco-float:nth-child(1){top:5%;left:3%;animation-delay:0s;}
+.deco-float:nth-child(2){top:20%;right:5%;animation-delay:2s;font-size:50px;}
+.deco-float:nth-child(3){bottom:20%;left:8%;animation-delay:4s;font-size:60px;}
+.deco-float:nth-child(4){bottom:10%;right:10%;animation-delay:6s;}
+@keyframes floatDrift{0%,100%{transform:translateY(0)rotate(0deg);}33%{transform:translateY(-20px)rotate(5deg);}66%{transform:translateY(10px)rotate(-3deg);}}
+.screen { display:none; position:relative; z-index:1; min-height:100vh; }
+.screen.active { display:flex; }
+
+/* ── INTRO ── */
+#screen-intro { flex-direction:column; align-items:center; justify-content:center; padding:60px 24px; text-align:center; }
+.intro-cake { font-size:80px; margin-bottom:8px; animation:cakeBounce 3s ease-in-out infinite; display:block; filter:drop-shadow(0 0 20px rgba(242,160,196,0.4)); }
+@keyframes cakeBounce{0%,100%{transform:translateY(0)scale(1);}50%{transform:translateY(-10px)scale(1.05);}}
+.intro-tomb { font-size:40px; margin-bottom:32px; display:block; opacity:0.7; }
+.brand-tag { font-family:'Playfair Display',serif; font-size:11px; letter-spacing:5px; color:var(--pink-deep); text-transform:uppercase; margin-bottom:16px; }
+.intro-title { font-family:'UnifrakturMaguntia',cursive; font-size:clamp(36px,9vw,68px); color:var(--pink); line-height:1.1; margin-bottom:8px; text-shadow:0 0 40px rgba(242,160,196,0.3),2px 2px 0 rgba(196,84,122,0.4); }
+.intro-subtitle { font-size:14px; letter-spacing:3px; color:var(--text-dim); margin-bottom:40px; }
+.slogan-wrap { display:flex; flex-direction:column; gap:6px; margin-bottom:40px; }
+.slogan-line { font-size:16px; color:var(--text-dim); letter-spacing:2px; }
+.slogan-line span { color:var(--pink); }
+.divider-sweet { display:flex; align-items:center; gap:12px; margin:32px auto; max-width:320px; }
+.divider-sweet::before,.divider-sweet::after{content:'';flex:1;height:1px;}
+.divider-sweet::before{background:linear-gradient(90deg,transparent,rgba(242,160,196,0.3));}
+.divider-sweet::after{background:linear-gradient(90deg,rgba(242,160,196,0.3),transparent);}
+.divider-sweet span{font-size:14px;opacity:0.5;}
+.narration-box { max-width:460px; background:rgba(45,26,61,0.4); border:1px solid var(--border); padding:28px 32px; margin:0 auto 40px; position:relative; }
+.narration-box::before,.narration-box::after{content:'';position:absolute;width:14px;height:14px;}
+.narration-box::before{top:-1px;left:-1px;border-top:2px solid var(--pink-deep);border-left:2px solid var(--pink-deep);}
+.narration-box::after{bottom:-1px;right:-1px;border-bottom:2px solid var(--pink-deep);border-right:2px solid var(--pink-deep);}
+.narration-box p { font-size:14px; line-height:2.4; color:var(--text-dim); font-weight:300; }
+.narration-box p em { color:var(--pink); font-style:normal; }
+.btn-start { background:transparent; border:1px solid var(--pink); color:var(--pink); font-family:'Noto Serif SC',serif; font-size:15px; letter-spacing:4px; padding:16px 52px; cursor:pointer; transition:all 0.35s; position:relative; overflow:hidden; }
+.btn-start:hover { background:rgba(242,160,196,0.08); box-shadow:0 0 24px rgba(242,160,196,0.2); }
+.question-count-badge { margin-top:20px; font-size:11px; letter-spacing:3px; color:var(--text-dim); opacity:0.6; }
+
+/* ── QUIZ ── */
+#screen-quiz { flex-direction:column; align-items:center; padding:50px 20px 60px; }
+.quiz-topbar { width:100%; max-width:580px; display:flex; align-items:center; gap:16px; margin-bottom:48px; }
+.progress-label { font-size:10px; letter-spacing:3px; color:var(--pink-deep); white-space:nowrap; font-family:'Playfair Display',serif; }
+.progress-track { flex:1; height:2px; background:rgba(242,160,196,0.1); border-radius:1px; overflow:hidden; }
+.progress-fill { height:100%; background:linear-gradient(90deg,var(--pink-deep),var(--pink)); border-radius:1px; transition:width 0.6s cubic-bezier(.4,0,.2,1); box-shadow:0 0 8px rgba(242,160,196,0.4); }
+.question-card { max-width:580px; width:100%; animation:qCardIn 0.45s cubic-bezier(.4,0,.2,1); }
+@keyframes qCardIn{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+.q-num { font-family:'Playfair Display',serif; font-style:italic; font-size:12px; color:var(--pink-deep); letter-spacing:2px; margin-bottom:14px; }
+.q-text { font-size:clamp(17px,3.5vw,22px); line-height:1.75; color:var(--cream); margin-bottom:32px; font-weight:400; }
+.options-grid { display:flex; flex-direction:column; gap:10px; }
+.opt-btn { background:var(--card); border:1px solid rgba(242,160,196,0.08); color:var(--text-dim); font-family:'Noto Serif SC',serif; font-size:14px; line-height:1.8; padding:15px 20px; cursor:pointer; text-align:left; transition:all 0.22s; display:flex; align-items:flex-start; gap:12px; position:relative; overflow:hidden; }
+.opt-btn::after { content:''; position:absolute; left:0; top:0; width:3px; height:100%; background:var(--pink); transform:scaleY(0); transition:transform 0.2s; transform-origin:bottom; }
+.opt-key { font-family:'Playfair Display',serif; font-size:10px; letter-spacing:2px; color:var(--pink-deep); opacity:0.7; margin-top:2px; flex-shrink:0; }
+.opt-btn:hover { border-color:rgba(242,160,196,0.3); color:var(--text); background:rgba(45,26,61,0.9); transform:translateX(4px); }
+.opt-btn:hover::after { transform:scaleY(1); }
+.opt-btn.selected { border-color:var(--pink); color:var(--pink-pale); background:rgba(196,84,122,0.12); transform:translateX(4px); }
+.opt-btn.selected::after { transform:scaleY(1); }
+.opt-btn.selected .opt-key { opacity:1; color:var(--pink); }
+.btn-next { margin-top:32px; background:transparent; border:1px solid var(--pink-deep); color:var(--pink-deep); font-family:'Noto Serif SC',serif; font-size:13px; letter-spacing:3px; padding:12px 36px; cursor:pointer; transition:all 0.25s; opacity:0; transform:translateY(8px); pointer-events:none; }
+.btn-next.visible { opacity:1; transform:translateY(0); pointer-events:auto; }
+.btn-next:hover { background:rgba(196,84,122,0.1); border-color:var(--pink); color:var(--pink); }
+
+/* ── SCAN ── */
+#screen-scan { flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:40px 20px; }
+.scan-ring { width:160px; height:160px; border:1px solid rgba(242,160,196,0.2); border-radius:50%; position:relative; margin:0 auto 40px; }
+.scan-ring::before { content:''; position:absolute; inset:-1px; border-radius:50%; border:2px solid transparent; border-top-color:var(--pink); animation:spinRing 1.4s linear infinite; }
+.scan-ring::after { content:'🎂'; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:36px; animation:cakeBounce 2s ease-in-out infinite; }
+@keyframes spinRing{to{transform:rotate(360deg);}}
+.scan-title { font-family:'Playfair Display',serif; font-size:13px; letter-spacing:4px; color:var(--pink-deep); margin-bottom:12px; }
+.scan-sub { font-size:14px; color:var(--text-dim); font-style:italic; margin-bottom:32px; }
+.scan-log { font-family:monospace; font-size:11px; color:var(--pink); opacity:0.5; min-height:90px; max-width:300px; text-align:left; line-height:2; white-space:pre-line; }
+
+/* ── RESULT ── */
+#screen-result { flex-direction:column; align-items:center; padding:60px 20px 80px; }
+.result-title-area { text-align:center; margin-bottom:40px; animation:qCardIn 0.6s ease both; }
+.result-eyebrow { font-family:'Playfair Display',serif; font-size:10px; letter-spacing:5px; color:var(--pink-deep); text-transform:uppercase; margin-bottom:12px; }
+.result-headline { font-family:'UnifrakturMaguntia',cursive; font-size:clamp(28px,7vw,48px); color:var(--pink); text-shadow:0 0 30px rgba(242,160,196,0.3); }
+.certificate { max-width:480px; width:100%; background:linear-gradient(135deg,#1a0f24,#0f0a18); border:1px solid rgba(242,160,196,0.25); padding:44px 36px 40px; position:relative; animation:qCardIn 0.7s ease 0.2s both; overflow:hidden; }
+.certificate::before,.certificate::after{content:'';position:absolute;width:24px;height:24px;}
+.certificate::before{top:-1px;left:-1px;border-top:2px solid var(--pink);border-left:2px solid var(--pink);}
+.certificate::after{bottom:-1px;right:-1px;border-bottom:2px solid var(--pink);border-right:2px solid var(--pink);}
+.cert-corner-br{position:absolute;top:-1px;right:-1px;width:24px;height:24px;border-top:2px solid var(--pink);border-right:2px solid var(--pink);}
+.cert-corner-bl{position:absolute;bottom:-1px;left:-1px;width:24px;height:24px;border-bottom:2px solid var(--pink);border-left:2px solid var(--pink);}
+.cert-bg-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'UnifrakturMaguntia',cursive;font-size:120px;color:var(--pink);opacity:0.03;white-space:nowrap;pointer-events:none;user-select:none;}
+.cert-label{text-align:center;font-size:9px;letter-spacing:5px;color:var(--text-dim);opacity:0.5;margin-bottom:20px;text-transform:uppercase;}
+.cert-emoji{display:block;text-align:center;font-size:52px;margin-bottom:16px;animation:cakeBounce 3s ease-in-out infinite;filter:drop-shadow(0 0 12px rgba(242,160,196,0.3));}
+.cert-code{text-align:center;font-family:monospace;font-size:11px;letter-spacing:4px;color:var(--pink-deep);margin-bottom:6px;}
+.cert-name{text-align:center;font-family:'UnifrakturMaguntia',cursive;font-size:clamp(28px,7vw,42px);color:var(--pink);line-height:1.1;margin-bottom:6px;text-shadow:0 0 20px rgba(242,160,196,0.25);}
+.cert-soul-desc{text-align:center;font-size:12px;color:var(--text-dim);letter-spacing:1px;margin-bottom:28px;}
+.cert-divider{width:80px;height:1px;background:linear-gradient(90deg,transparent,var(--pink-deep),transparent);margin:0 auto 24px;}
+.cert-row{font-size:13px;color:var(--pink-pale);margin-bottom:10px;display:flex;gap:8px;align-items:flex-start;}
+.cert-row .cert-row-label{color:var(--pink-deep);font-size:10px;letter-spacing:2px;flex-shrink:0;margin-top:2px;}
+.cert-row.dim{color:var(--text-dim);font-size:12px;}
+.cert-philosophy{margin-top:20px;padding:16px 20px;background:rgba(242,160,196,0.05);border-left:2px solid var(--pink-deep);font-size:13px;color:var(--text-dim);font-style:italic;line-height:1.8;}
+.cert-philosophy em{color:var(--pink);font-style:normal;}
+.cert-stamp{margin-top:28px;text-align:center;font-size:9px;letter-spacing:3px;color:var(--text-dim);opacity:0.4;line-height:2;}
+.result-cta{max-width:480px;width:100%;margin-top:32px;display:flex;flex-direction:column;gap:12px;animation:qCardIn 0.7s ease 0.5s both;}
+.cta-epitree{background:rgba(196,84,122,0.08);border:1px solid var(--pink-deep);padding:16px 24px;font-size:12px;color:var(--text-dim);line-height:2;text-align:center;letter-spacing:1px;}
+.cta-epitree strong{color:var(--pink);font-weight:400;}
+.btn-retry{background:transparent;border:1px solid rgba(242,160,196,0.2);color:var(--text-dim);font-family:'Noto Serif SC',serif;font-size:12px;letter-spacing:3px;padding:12px;cursor:pointer;transition:all 0.25s;text-align:center;}
+.btn-retry:hover{border-color:var(--pink);color:var(--pink);}
+.share-hint{margin-top:24px;font-size:11px;letter-spacing:2px;color:var(--text-dim);opacity:0.4;text-align:center;animation:qCardIn 0.7s ease 0.8s both;}
+::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--pink-deep);border-radius:2px;}
+</style>
+</head>
+<body>
+
+<div class="deco-float">🎂</div>
+<div class="deco-float">🪦</div>
+<div class="deco-float">🍰</div>
+<div class="deco-float">💀</div>
+
+<!-- INTRO -->
+<div id="screen-intro" class="screen active">
+  <span class="intro-cake">🎂</span>
+  <span class="intro-tomb">🪦</span>
+  <div class="brand-tag">Epitree · 存在回声 · 灵魂回收站</div>
+  <h1 class="intro-title">甜丧灵魂图鉴</h1>
+  <div class="intro-subtitle">蛋糕墓碑 · 出厂设置测试</div>
+  <div class="slogan-wrap">
+    <div class="slogan-line"><span>生前演人</span>，死后露魂；</div>
+    <div class="slogan-line"><span>一半阴间</span>，一半甜丧</div>
+  </div>
+  <div class="divider-sweet"><span>🍬</span></div>
+  <div class="narration-box">
+    <p>欢迎来到<em>存在回声 · 灵魂回收站</em><br>
+    人的一生，不过是灵魂在人间的一次<em>临时租借</em>。<br>
+    生前被规训、被定义、被期待；<br>
+    死后卸下所有面具，你的灵魂<em>原本是什么鬼样子</em>？<br><br>
+    今天，重置你的灵魂出厂设置。</p>
+  </div>
+  <button class="btn-start" id="btn-start">唤醒沉睡的灵魂</button>
+  <div class="question-count-badge">36 道题 · 36 种灵魂 · 限定款甜丧出厂证</div>
+</div>
+
+<!-- QUIZ -->
+<div id="screen-quiz" class="screen">
+  <div class="quiz-topbar">
+    <span class="progress-label" id="prog-label">01 / 36</span>
+    <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:2.7%"></div></div>
+  </div>
+  <div class="question-card" id="question-card"></div>
+  <button class="btn-next" id="btn-next">下一题 →</button>
+</div>
+
+<!-- SCAN -->
+<div id="screen-scan" class="screen">
+  <div class="scan-ring"></div>
+  <div class="scan-title">灵魂扫描中</div>
+  <div class="scan-sub">Epitree 正在解析你的出厂设置……</div>
+  <div class="scan-log" id="scan-log"></div>
+</div>
+
+<!-- RESULT -->
+<div id="screen-result" class="screen">
+  <div class="result-title-area">
+    <div class="result-eyebrow">灵魂出厂证 · 权威认证</div>
+    <div class="result-headline">你的灵魂已出厂</div>
+  </div>
+  <div class="certificate" id="certificate">
+    <div class="cert-corner-br"></div>
+    <div class="cert-corner-bl"></div>
+    <div class="cert-bg-text" id="cert-bg-text">Soul</div>
+    <div class="cert-label">Epitree · 甜丧灵魂出厂证 · 限定款</div>
+    <span class="cert-emoji" id="cert-emoji">🎂</span>
+    <div class="cert-code" id="cert-code">CODE</div>
+    <div class="cert-name" id="cert-name">灵魂名称</div>
+    <div class="cert-soul-desc" id="cert-soul-desc">灵魂类型</div>
+    <div class="cert-divider"></div>
+    <div class="cert-row"><span class="cert-row-label">人间</span><span id="cert-renjian">…</span></div>
+    <div class="cert-row dim"><span class="cert-row-label">灵魂</span><span id="cert-hunling">…</span></div>
+    <div class="cert-philosophy" id="cert-philosophy">…</div>
+    <div class="cert-stamp">你的灵魂已出厂重置，人间人设已清除<br>本结果由 Epitree 生命之树 权威认证<br>前往 存在回声，认领你的专属数字墓碑</div>
+  </div>
+  <div class="result-cta">
+    <div class="cta-epitree">你的灵魂出厂设置已同步至 <strong>Epitree 生命之树</strong><br>前往 <strong>存在回声</strong>，认领你的专属数字墓碑 🪦</div>
+    <button class="btn-retry" id="btn-retry">重置灵魂 · 再测一次</button>
+  </div>
+  <div class="share-hint">截图发圈 · 你的阴间甜丧认证</div>
+</div>
+
+<script>
+var questions = [
+  {q:"灵魂离开身体的第一秒，你最想？",opts:[{t:"躲进被窝永远不醒",c:"ZZZZ"},{t:"偷看别人的秘密",c:"CTRL"},{t:"骂完这辈子所有委屈",c:"FUCK"},{t:"立刻去吃好吃的",c:"EATO"}]},
+  {q:"人间最让你恶心的是？",opts:[{t:"假装合群",c:"FAKE"},{t:"道德绑架",c:"BLAM"},{t:"无效努力",c:"MALO"},{t:"没钱",c:"SOLO"}]},
+  {q:"你的灵魂最像哪种食物？",opts:[{t:"过期软糖（腐烂但甜）",c:"BURR"},{t:"冰镇气泡水（一碰就炸）",c:"SODA"},{t:"冷掉关东煮（佛系但凉）",c:"OJBK"},{t:"麻辣火锅（暴躁又上头）",c:"FUCK"}]},
+  {q:"社交场合，你的灵魂状态是？",opts:[{t:"表面微笑，内心翻白眼",c:"FAKE"},{t:"想立刻原地去世",c:"ZZZZ"},{t:"疯狂吐槽",c:"FUCK"},{t:"隐身不存在",c:"SOLO"}]},
+  {q:"死后最想拥有的超能力？",opts:[{t:"永远睡觉",c:"ZZZZ"},{t:"看透所有人",c:"CTRL"},{t:"不用花钱",c:"SOLO"},{t:"不用社交",c:"ALON"}]},
+  {q:"你这辈子最大的病是？",opts:[{t:"总怪自己",c:"BLAM"},{t:"想太多",c:"CTRL"},{t:"太好说话",c:"ATMF"},{t:"太容易动情",c:"LOVE"}]},
+  {q:"灵魂栖息地你选？",opts:[{t:"被窝",c:"ZZZZ"},{t:"宇宙边缘",c:"WILD"},{t:"无人墓地",c:"ALON"},{t:"夜市小吃街",c:"EATO"}]},
+  {q:"遇到傻逼，你的灵魂反应？",opts:[{t:"直接开骂",c:"FUCK"},{t:"冷眼旁观",c:"CTRL"},{t:"假装没看见",c:"FAKE"},{t:"内心卧槽但什么都不说",c:"IDLE"}]},
+  {q:"你本质是？",opts:[{t:"野生未驯化",c:"WILD"},{t:"易碎玻璃心",c:"BRKN"},{t:"永久节能模式",c:"IDLE"},{t:"人间观测员",c:"CTRL"}]},
+  {q:"对人生的总结？",opts:[{t:"体验卡到期",c:"ZZZZ"},{t:"打工还债",c:"MALO"},{t:"搞笑综艺",c:"HHHH"},{t:"没必要重来",c:"OJBK"}]},
+  {q:"死后希望别人怎么对你？",opts:[{t:"别怀念我",c:"ALON"},{t:"记得我很酷",c:"WILD"},{t:"给我烧钱烧吃的",c:"EATO"},{t:"当我没来过",c:"IDLE"}]},
+  {q:"你的灵魂出厂缺陷是？",opts:[{t:"太敏感",c:"BRKN"},{t:"太善良",c:"ATMF"},{t:"太懒惰",c:"IDLE"},{t:"太愤世",c:"FUCK"}]},
+  {q:"你最像哪类角色？",opts:[{t:"摆烂废柴主角",c:"IDLE"},{t:"高冷孤独反派",c:"CTRL"},{t:"吐槽担当",c:"FUCK"},{t:"默默守护的路人",c:"ATMF"}]},
+  {q:"灵魂受伤时会？",opts:[{t:"躲起来自愈",c:"ALON"},{t:"摆烂到底",c:"IDLE"},{t:"疯狂内耗",c:"BLAM"},{t:"嘴硬装没事",c:"FAKE"}]},
+  {q:"你最抗拒的标签？",opts:[{t:"正常人",c:"WILD"},{t:"努力家",c:"IDLE"},{t:"温柔体贴",c:"FUCK"},{t:"成熟稳重",c:"HHHH"}]},
+  {q:"下辈子，你的灵魂想成为？",opts:[{t:"风云石头等自然物",c:"WILD"},{t:"猫狗野生小动物",c:"CATO"},{t:"好吃的食物",c:"EATO"},{t:"不存在的东西",c:"ALON"}]},
+  {q:"你最容易被什么治愈？",opts:[{t:"睡觉",c:"ZZZZ"},{t:"美食",c:"EATO"},{t:"独处",c:"SOLO"},{t:"发呆",c:"IDLE"}]},
+  {q:"你最讨厌的食物口感？",opts:[{t:"黏糊糊",c:"BURR"},{t:"太甜腻",c:"CANDY"},{t:"太苦",c:"BLAM"},{t:"太辣",c:"FUCK"}]},
+  {q:"你最像哪种动物？",opts:[{t:"猫",c:"CATO"},{t:"狗",c:"PUP"},{t:"兔子",c:"RABB"},{t:"大象",c:"WILD"}]},
+  {q:"你处理情绪的方式是？",opts:[{t:"内耗",c:"BLAM"},{t:"吐槽",c:"FUCK"},{t:"摆烂",c:"IDLE"},{t:"隐藏",c:"FAKE"}]},
+  {q:"你最喜欢的天气？",opts:[{t:"雨天",c:"ALON"},{t:"晴天",c:"EATO"},{t:"雪天",c:"SNOW"},{t:"阴天",c:"MOSS"}]},
+  {q:"你最像哪种甜品？",opts:[{t:"抹茶（苦中带甜）",c:"BLAM"},{t:"草莓（酸酸甜甜）",c:"LOVE"},{t:"巧克力（苦甜复杂）",c:"BRKN"},{t:"棉花糖（轻飘飘没心没肺）",c:"HHHH"}]},
+  {q:"你最容易陷入的状态？",opts:[{t:"焦虑",c:"BLAM"},{t:"摆烂",c:"IDLE"},{t:"愤怒",c:"FUCK"},{t:"温柔",c:"LOVE"}]},
+  {q:"你最像哪种材料？",opts:[{t:"玻璃（透明易碎）",c:"GLAS"},{t:"陶土（可塑但会裂）",c:"CLAY"},{t:"毛线（柔软易缠绕）",c:"HHHH"},{t:"泡沫（一戳就破）",c:"FOAM"}]},
+  {q:"你最向往的生活？",opts:[{t:"独居不被打扰",c:"SOLO"},{t:"自由随意流浪",c:"WILD"},{t:"安稳平淡就好",c:"OJBK"},{t:"热闹有人陪伴",c:"HHHH"}]},
+  {q:"你最像哪种花？",opts:[{t:"带刺玫瑰",c:"ROSE"},{t:"蒲公英（随风飘散）",c:"ALON"},{t:"青苔（阴暗角落）",c:"MOSS"},{t:"枯萎了的花",c:"WILT"}]},
+  {q:"你最容易被什么打动？",opts:[{t:"温柔",c:"LOVE"},{t:"真诚",c:"PUP"},{t:"孤独感",c:"SOLO"},{t:"疯狂劲儿",c:"FUCK"}]},
+  {q:"你最像哪种饮品？",opts:[{t:"奶茶（甜腻但上头）",c:"MALO"},{t:"黑咖啡（苦但清醒）",c:"CTRL"},{t:"汽水（好喝但没营养）",c:"SODA"},{t:"牛奶（平淡但温暖）",c:"ATMF"}]},
+  {q:"你最像哪种面包？",opts:[{t:"泡芙（掏空自己的）",c:"ATMF"},{t:"普通吐司（不起眼）",c:"OJBK"},{t:"华夫（格子方正努力）",c:"WAFF"},{t:"面包边（没人要的那种）",c:"BURR"}]},
+  {q:"你灵魂的状态更像？",opts:[{t:"融化中",c:"LOVE"},{t:"凝固中",c:"IDLE"},{t:"风干中",c:"CLAY"},{t:"腐烂中",c:"BURR"}]},
+  {q:"你最像哪种情绪？",opts:[{t:"平静如死水",c:"SOLO"},{t:"一触即发暴躁",c:"FUCK"},{t:"说不清楚的悲伤",c:"LOVE"},{t:"说不清楚的麻木",c:"IDLE"}]},
+  {q:"你最像哪种颜色？",opts:[{t:"黑色",c:"CATO"},{t:"白色",c:"SNOW"},{t:"粉色",c:"LOVE"},{t:"绿色",c:"MOSS"}]},
+  {q:"你最像哪种玩具？",opts:[{t:"被人摆弄的娃娃",c:"FAKE"},{t:"缠缠绕绕的毛线团",c:"HHHH"},{t:"容易散架的积木",c:"CLAY"},{t:"一戳就炸的气球",c:"FOAM"}]},
+  {q:"你最像哪种自然现象？",opts:[{t:"风（自由无形）",c:"WILD"},{t:"雪（纯洁但易逝）",c:"SNOW"},{t:"雨（说来就来）",c:"ALON"},{t:"雾（模糊不清）",c:"IDLE"}]},
+  {q:"你最像哪种水果？",opts:[{t:"草莓（甜但易烂）",c:"LOVE"},{t:"梨（凉凉淡淡）",c:"SOLO"},{t:"柠檬（一挤就酸）",c:"SODA"},{t:"榴莲（自带气场）",c:"WILD"}]},
+  {q:"你灵魂的终极愿望？",opts:[{t:"被爱",c:"LOVE"},{t:"自由",c:"WILD"},{t:"安宁",c:"ALON"},{t:"吃饱",c:"EATO"}]}
+];
+
+var results = {
+  BURR:{emoji:"🧀",name:"腐烂芝士魂",desc:"颓废美学 · 限定款",renjian:"表面温和，内心早已变质发臭",hunling:"发霉布里奶酪、过期奶油蛋糕",philo:"温柔久了，<em>灵魂会腐烂</em>"},
+  SODA:{emoji:"🥤",name:"气绝气泡魂",desc:"看似活泼 · 实则跑气",renjian:"看似活泼，实则早已没气",hunling:"跑气的可乐、融化的冰淇淋",philo:"热闹过后，<em>只剩空虚的甜</em>"},
+  CANDY:{emoji:"🍬",name:"蛀牙糖魂",desc:"甜蜜自毁 · 经典款",renjian:"给人甜，自己却伤痕累累",hunling:"粘牙太妃糖、蛀牙水果糖",philo:"甜蜜的代价，<em>是自我毁灭</em>"},
+  WAFF:{emoji:"🧇",name:"焦糊华夫魂",desc:"用力过猛 · 苦味限定",renjian:"努力过头，最后只剩焦糊",hunling:"烤焦的华夫饼、糊掉的焦糖",philo:"太用力的人生，<em>注定是苦的</em>"},
+  GLAS:{emoji:"🪟",name:"碎玻璃魂",desc:"通透伤人 · 高危款",renjian:"通透干净，实则锋利伤人",hunling:"弥散碎玻璃、透明糖纸",philo:"看似无害的灵魂，<em>最容易割伤自己</em>"},
+  CLAY:{emoji:"🏺",name:"风干陶土魂",desc:"可塑性强 · 已硬化",renjian:"可塑性强，最后却硬成石头",hunling:"干裂陶土、风干泥塑",philo:"被生活塑形后，<em>灵魂失去了温度</em>"},
+  SNOW:{emoji:"❄️",name:"瞬逝雪魂",desc:"纯洁美好 · 见光即化",renjian:"纯洁美好，见光就化",hunling:"冬日初雪、易碎糖霜",philo:"<em>美好</em>，是灵魂最短暂的出厂设置"},
+  FOAM:{emoji:"🫧",name:"泡沫虚魂",desc:"看起来很满 · 一戳就破",renjian:"看起来很满，一戳就破",hunling:"啤酒泡沫、奶油裱花",philo:"所有的丰盈，<em>都是假象</em>"},
+  CATO:{emoji:"🐈‍⬛",name:"厌世猫魂",desc:"高冷躺平 · 拒绝驯化",renjian:"高冷独立，实则厌世躺平",hunling:"流浪黑猫、装死的布偶猫",philo:"<em>独立</em>，是因为对世界毫无兴趣"},
+  RABB:{emoji:"🐰",name:"断头兔魂",desc:"温顺可爱 · 任人宰割",renjian:"温顺可爱，任人宰割",hunling:"垂耳兔、棉花糖兔子",philo:"太乖的灵魂，<em>下场都很惨</em>"},
+  PUP:{emoji:"🐶",name:"丧系小狗魂",desc:"忠诚粘人 · 容易被抛弃",renjian:"忠诚粘人，容易被抛弃",hunling:"流浪小狗、湿漉漉的眼神",philo:"<em>深情</em>，是灵魂的绝症"},
+  ZZZZ:{emoji:"🐻",name:"冬眠小熊魂",desc:"装死摸鱼 · 只想冬眠",renjian:"装死摸鱼，只想冬眠",hunling:"冬眠棕熊、棉花被窝",philo:"<em>逃避</em>，是灵魂的自我保护"},
+  EATO:{emoji:"🍱",name:"饱死饭团魂",desc:"干饭第一 · 生死看淡",renjian:"干饭第一，生死看淡",hunling:"巨型饭团、暴食寿司",philo:"填满胃，<em>就能填满空虚的灵魂</em>"},
+  FAKE:{emoji:"🪆",name:"假面娃娃魂",desc:"社交演员 · 完美人设",renjian:"社交演员，完美人设",hunling:"陶瓷娃娃、精致人偶",philo:"活着，<em>就是一场精致的cosplay</em>"},
+  WILD:{emoji:"🐘",name:"旷野大象魂",desc:"不合群 · 孤独行走",renjian:"不合群，孤独行走",hunling:"迷雾大象、野生浆果",philo:"孤独，<em>是王者的甜点</em>"},
+  BRKN:{emoji:"🥚",name:"碎蛋软心魂",desc:"高敏感 · 易碎玻璃心",renjian:"高敏感，易碎玻璃心",hunling:"破裂的溏心蛋、软心巧克力",philo:"<em>破碎</em>，是为了流出最甜的内核"},
+  SOLO:{emoji:"🍮",name:"独居布丁魂",desc:"社恐独处 · 享受孤独",renjian:"社恐独处，享受孤独",hunling:"单人份布丁、密封罐头",philo:"一个人吃饭，<em>灵魂最安稳</em>"},
+  LOVE:{emoji:"🍓",name:"恋爱草莓魂",desc:"为爱冲锋 · 酸甜苦涩",renjian:"为爱冲锋，酸甜苦涩",hunling:"草莓糖葫芦、腐烂浆果",philo:"爱是甜的，<em>也是烂的</em>"},
+  MALO:{emoji:"🧋",name:"社畜奶茶魂",desc:"打工续命 · 全靠糖分",renjian:"打工续命，全靠糖分",hunling:"续命奶茶、加班咖啡",philo:"打工人的灵魂，<em>是甜腻的苦</em>"},
+  ATMF:{emoji:"🍩",name:"老好人泡芙魂",desc:"掏空自己 · 填满别人",renjian:"掏空自己，填满别人",hunling:"空心泡芙、被挤扁的面包",philo:"<em>善良</em>，是灵魂被掏空的理由"},
+  BLAM:{emoji:"🍵",name:"内耗抹茶魂",desc:"自我归罪 · 精神内耗",renjian:"自我归罪，精神内耗",hunling:"苦涩抹茶、回甘乌龙茶",philo:"灵魂的苦，<em>只有自己懂</em>"},
+  CTRL:{emoji:"☕",name:"清醒冰美式魂",desc:"看透一切 · 冷眼旁观",renjian:"看透一切，冷眼旁观",hunling:"冰美式、无糖黑咖啡",philo:"<em>清醒的灵魂</em>，注定是苦的"},
+  FUCK:{emoji:"🌶️",name:"暴躁辣椒魂",desc:"一点就炸 · 灵魂直接",renjian:"暴躁易怒，一点就炸",hunling:"魔鬼辣椒、麻辣火锅",philo:"辣，<em>是灵魂最直接的反抗</em>"},
+  OJBK:{emoji:"🍢",name:"随缘关东煮魂",desc:"摆烂随缘 · 都行可以",renjian:"摆烂随缘，都行可以",hunling:"冷掉关东煮、随缘串串",philo:"<em>不执着</em>，是灵魂的解药"},
+  HHHH:{emoji:"🍡",name:"傻乐棉花糖魂",desc:"没心没肺 · 快乐笨蛋",renjian:"没心没肺，快乐笨蛋",hunling:"蓬松棉花糖、彩虹糖豆",philo:"<em>愚蠢</em>，是灵魂的甜味剂"},
+  IDLE:{emoji:"🍭",name:"节能软糖魂",desc:"节能模式 · 懒得动弹",renjian:"节能模式，懒得动弹",hunling:"橡皮软糖、凝固的果冻",philo:"<em>静止</em>，是灵魂的省电模式"},
+  ALON:{emoji:"🌼",name:"墓地蒲公英魂",desc:"独自美丽 · 随风飘散",renjian:"独自美丽，随风飘散",hunling:"墓地蒲公英、孤独的花",philo:"自由的代价，<em>是永远的漂泊</em>"},
+  ROSE:{emoji:"🥀",name:"带刺枯玫魂",desc:"浪漫美丽 · 浑身是刺",renjian:"浪漫美丽，浑身是刺",hunling:"干枯玫瑰、荆棘花束",philo:"<em>美丽的灵魂</em>，自带防御机制"},
+  MOSS:{emoji:"🌿",name:"阴湿苔魂",desc:"低调内敛 · 生于阴暗",renjian:"低调内敛，生长于阴暗",hunling:"阴湿青苔、腐木蘑菇",philo:"不见光的地方，<em>灵魂才能生长</em>"},
+  WILT:{emoji:"🌻",name:"垂头枯花魂",desc:"曾经绚烂 · 如今枯萎",renjian:"曾经绚烂，如今只剩枯萎",hunling:"蔫掉的向日葵、脱水鲜花",philo:"<em>盛开过</em>，就够了"},
+  SEED:{emoji:"🌱",name:"沉睡种魂",desc:"看似沉睡 · 等待消亡",renjian:"看似沉睡，实则等待腐烂",hunling:"干瘪种子、埋土的坚果",philo:"沉睡，<em>是为了彻底的消亡</em>"},
+  LULD:{emoji:"🤡",name:"乐极生悲魂",desc:"没心没肺 · 笑完就哭",renjian:"没心没肺，笑完就哭",hunling:"小丑糖果、笑脸饼干",philo:"笑得最大声的，<em>灵魂最孤独</em>"},
+  MEWU:{emoji:"🐾",name:"病娇喵魂",desc:"软糯撒娇 · 占有欲极强",renjian:"软糯撒娇，占有欲极强",hunling:"粘人奶猫、缠人的毛线",philo:"<em>依赖</em>，是灵魂的牢笼"}
+};
+
+var currentQ = 0;
+var scores = {};
+var selectedCode = null;
+var KEYS = ['A','B','C','D'];
+
+function showScreen(id) {
+  var screens = document.querySelectorAll('.screen');
+  for (var i = 0; i < screens.length; i++) {
+    screens[i].classList.remove('active');
+  }
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function startQuiz() {
+  scores = {};
+  currentQ = 0;
+  selectedCode = null;
+  showScreen('screen-quiz');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  var q = questions[currentQ];
+  var card = document.getElementById('question-card');
+  var btnNext = document.getElementById('btn-next');
+
+  btnNext.classList.remove('visible');
+  selectedCode = null;
+
+  document.getElementById('prog-label').textContent =
+    (currentQ + 1 < 10 ? '0' : '') + (currentQ + 1) + ' / ' + questions.length;
+  document.getElementById('prog-fill').style.width =
+    ((currentQ + 1) / questions.length * 100) + '%';
+
+  // Clear card
+  card.innerHTML = '';
+
+  var numDiv = document.createElement('div');
+  numDiv.className = 'q-num';
+  numDiv.textContent = 'Question ' + (currentQ + 1 < 10 ? '0' : '') + (currentQ + 1);
+  card.appendChild(numDiv);
+
+  var textDiv = document.createElement('div');
+  textDiv.className = 'q-text';
+  textDiv.textContent = q.q;
+  card.appendChild(textDiv);
+
+  var grid = document.createElement('div');
+  grid.className = 'options-grid';
+
+  for (var i = 0; i < q.opts.length; i++) {
+    (function(opt, idx) {
+      var btn = document.createElement('button');
+      btn.className = 'opt-btn';
+      btn.setAttribute('data-code', opt.c);
+
+      var keySpan = document.createElement('span');
+      keySpan.className = 'opt-key';
+      keySpan.textContent = KEYS[idx];
+
+      var textSpan = document.createElement('span');
+      textSpan.textContent = opt.t;
+
+      btn.appendChild(keySpan);
+      btn.appendChild(textSpan);
+
+      btn.addEventListener('click', function() {
+        selectOpt(btn, opt.c);
+      });
+
+      grid.appendChild(btn);
+    })(q.opts[i], i);
+  }
+
+  card.appendChild(grid);
+
+  // Force reflow for animation
+  card.style.animation = 'none';
+  card.offsetHeight;
+  card.style.animation = '';
+}
+
+function selectOpt(btn, code) {
+  var allBtns = document.querySelectorAll('.opt-btn');
+  for (var i = 0; i < allBtns.length; i++) {
+    allBtns[i].classList.remove('selected');
+  }
+  btn.classList.add('selected');
+  selectedCode = code;
+  scores[code] = (scores[code] || 0) + 1;
+  document.getElementById('btn-next').classList.add('visible');
+}
+
+function nextQuestion() {
+  if (!selectedCode) return;
+  currentQ++;
+  if (currentQ >= questions.length) {
+    showScan();
+  } else {
+    renderQuestion();
+  }
+}
+
+function showScan() {
+  showScreen('screen-scan');
+  var log = document.getElementById('scan-log');
+  var lines = [
+    '> 正在读取灵魂碎片……',
+    '> 检测到阴间倾向值……',
+    '> 扫描甜丧浓度……',
+    '> 匹配出厂配置中……',
+    '> 警告：检测到摆烂因子',
+    '> 灵魂特征提取完毕',
+    '> 正在生成出厂证书……',
+    '> 完成 ✓'
+  ];
+  var i = 0;
+  log.textContent = '';
+  var t = setInterval(function() {
+    if (i < lines.length) {
+      log.textContent += lines[i] + '\n';
+      i++;
+    } else {
+      clearInterval(t);
+      setTimeout(showResult, 600);
+    }
+  }, 350);
+}
+
+function showResult() {
+  var sorted = Object.keys(scores).sort(function(a, b) {
+    return scores[b] - scores[a];
+  });
+  var topCode = sorted[0] || 'OJBK';
+  var r = results[topCode] || results['OJBK'];
+
+  document.getElementById('cert-emoji').textContent = r.emoji;
+  document.getElementById('cert-code').textContent = '· ' + topCode + ' ·';
+  document.getElementById('cert-name').textContent = r.name;
+  document.getElementById('cert-soul-desc').textContent = r.desc;
+  document.getElementById('cert-renjian').textContent = r.renjian;
+  document.getElementById('cert-hunling').textContent = r.hunling;
+  document.getElementById('cert-philosophy').innerHTML = r.philo;
+  document.getElementById('cert-bg-text').textContent = topCode;
+
+  showScreen('screen-result');
+}
+
+function restartQuiz() {
+  scores = {};
+  currentQ = 0;
+  selectedCode = null;
+  showScreen('screen-intro');
+}
+
+document.getElementById('btn-start').addEventListener('click', startQuiz);
+document.getElementById('btn-next').addEventListener('click', nextQuestion);
+document.getElementById('btn-retry').addEventListener('click', restartQuiz);
+
+document.addEventListener('keydown', function(e) {
+  var quiz = document.getElementById('screen-quiz');
+  if (!quiz.classList.contains('active')) return;
+  var map = {a:0, b:1, c:2, d:3, A:0, B:1, C:2, D:3};
+  if (map[e.key] !== undefined) {
+    var btns = document.querySelectorAll('.opt-btn');
+    if (btns[map[e.key]]) btns[map[e.key]].click();
+  }
+  if ((e.key === 'Enter' || e.key === ' ') && selectedCode) {
+    nextQuestion();
+  }
+});
+</script>
+</body>
+</html>
